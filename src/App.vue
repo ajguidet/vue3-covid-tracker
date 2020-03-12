@@ -1,47 +1,24 @@
 <template>
-  <section class="app">
-    {{ state.value }}
+  <section>
+    <h2>Vue 3 test with suspense</h2>
+    <Suspense class="content">
+      <template #default>
+        <DataGetter />
+      </template>
+      <template #fallback>
+        <span>Loading...</span>
+      </template>
+    </Suspense>
   </section>
 </template>
 
 <script>
-import { reactive } from 'vue'
-import { onMounted } from 'vue'
-
-const getData = () => {
-  return fetch('https://cors-anywhere.herokuapp.com/https://www.worldometers.info/coronavirus/', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    }
-  })
-    .then(text => {
-      return text.text()
-    })
-    .then(html => {
-      var parser = new DOMParser()
-      const documentCovid = parser.parseFromString(html, 'text/html')
-
-      const values = documentCovid.querySelectorAll('.maincounter-number')
-      return {
-        cases: values[0].innerText,
-        deaths: values[1].innerText,
-        recovered: values[2].innerText
-      }
-    })
-}
+import DataGetter from './components/DataGetter.vue'
 
 export default {
   name: 'App',
-  setup () {
-    const { cases, deaths, recovered } = getData()
-    const state = reactive({
-      cases,
-      deaths,
-      recovered
-    })
-    console.log(state)
-    return { state }
+  components: {
+    DataGetter
   }
 }
 </script>
@@ -51,5 +28,18 @@ export default {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  text-align: center;
+}
+h2 {
+  margin: 30px 0;
+}
+.content {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
 }
 </style>
